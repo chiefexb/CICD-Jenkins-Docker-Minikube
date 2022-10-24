@@ -37,8 +37,8 @@ node {
 
       /* Apply all manifest files */
       /* sh "kubectl apply -f ./kube/" */
-      /*  sh "kubectl apply -f ./kube/mongo.yaml"*/
-      /*sh "kubectl apply -f ./kube/vue-chess.yaml"*/
+      sh "kubectl apply -f ./kube/mongo.yaml"
+      sh "kubectl apply -f ./kube/vue-chess.yaml"
         
     }
 
