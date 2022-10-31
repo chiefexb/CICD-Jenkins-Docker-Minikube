@@ -1,5 +1,9 @@
 # CI/CD pipeline for NodeJs and MongoDB application using Jenkins and deployment to Minikube
 
+We build a docker image from the Dockerfile located in Github and upload the resulting image to Docker Hub.
+Then we deploy application to Minukube.
+
+
 ![alt text](https://github.com/anpavlovsk/CICD-Jenkins-Docker-Minikube/blob/main/screenshots/1.png?raw=true)
 
 
