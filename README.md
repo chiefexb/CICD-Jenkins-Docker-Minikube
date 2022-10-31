@@ -10,7 +10,8 @@ Then we deploy application to Minukube.
 ![alt text](https://github.com/anpavlovsk/CICD-Jenkins-Docker-Minikube/blob/main/screenshots/2.png?raw=true)
 
 
-Jenkinsfile content
+Application uses a pipeline created using the Jenkinsfile in the repo root directory. I  have next stages in my pipeline:
+Pull latest version from GitHub -> Build image -> Run tests ->Push image to DockerHub--> Deploy to Minikube
 ````
 node {
     def app
@@ -64,6 +65,7 @@ node {
 
 ![alt text](https://github.com/anpavlovsk/CICD-Jenkins-Docker-Minikube/blob/main/screenshots/4.png?raw=true)
 
+I’m using Pol SCM – checking github every 30 minutes. We really should be using webhooks – but for this demo it’s more then enough. 
 
 ![alt text](https://github.com/anpavlovsk/CICD-Jenkins-Docker-Minikube/blob/main/screenshots/5.png?raw=true)
 
