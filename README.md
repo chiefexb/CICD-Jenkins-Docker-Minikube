@@ -1,7 +1,7 @@
 # CI/CD pipeline for NodeJs and MongoDB application using Jenkins and deployment to Minikube
 
-We build a docker image from the Dockerfile located in Github and upload the resulting image to Docker Hub.
-Then we deploy application to Minukube.
+I build a docker image from the Dockerfile located in Github and upload the resulting image to Docker Hub.
+Then I deploy application to Minukube.
 
 
 ![alt text](https://github.com/anpavlovsk/CICD-Jenkins-Docker-Minikube/blob/main/screenshots/1.png?raw=true)
@@ -59,18 +59,105 @@ node {
 
 }
 ````
+I’m using Pol SCM – checking github every 30 minutes. We really should be using webhooks – but for this demo it’s more then enough. 
 
 ![alt text](https://github.com/anpavlovsk/CICD-Jenkins-Docker-Minikube/blob/main/screenshots/3.png?raw=true)
 
 
 ![alt text](https://github.com/anpavlovsk/CICD-Jenkins-Docker-Minikube/blob/main/screenshots/4.png?raw=true)
 
-I’m using Pol SCM – checking github every 30 minutes. We really should be using webhooks – but for this demo it’s more then enough. 
 
 ![alt text](https://github.com/anpavlovsk/CICD-Jenkins-Docker-Minikube/blob/main/screenshots/5.png?raw=true)
 
-Manifestst
+Manifest for NodeJs application 
+''''
+apiVersion: v1
+kind: Service
+metadata:
+  name: vue-chess
+spec:
+  selector:
+    app: vue-chess
+  ports:
+    - port: 3000
+      targetPort: 3311
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vue-chess
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: vue-chess
+  template:
+    metadata:
+      labels:
+        app: vue-chess
+    spec:
+      containers:
+        - name: vue-chess
+          image: anpavlovsk/vue-chess-img
+          ports:
+            - containerPort: 3311
+          env:
+            - name: MONGO_URL
+              value: mongodb://mongo:27017/vuegustchess
+          imagePullPolicy: IfNotPresent
+''''
 
+Manifestst for MongoDB 
+''''
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  selector:
+    app: mongo
+  ports:
+    - port: 27017
+      targetPort: 27017
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+spec:
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:4.0.0
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: storage
+              mountPath: /data/db
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: mongo-pvc
+''''
 ![alt text](https://github.com/anpavlovsk/CICD-Jenkins-Docker-Minikube/blob/main/screenshots/6.png?raw=true)
 
 
