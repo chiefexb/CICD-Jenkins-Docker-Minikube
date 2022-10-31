@@ -70,7 +70,7 @@ I’m using Pol SCM – checking github every 30 minutes. We really should be us
 ![alt text](https://github.com/anpavlovsk/CICD-Jenkins-Docker-Minikube/blob/main/screenshots/5.png?raw=true)
 
 Manifest for NodeJs application 
-''''
+````
 apiVersion: v1
 kind: Service
 metadata:
@@ -106,10 +106,10 @@ spec:
             - name: MONGO_URL
               value: mongodb://mongo:27017/vuegustchess
           imagePullPolicy: IfNotPresent
-''''
+````
 
 Manifestst for MongoDB 
-''''
+````
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -157,7 +157,7 @@ spec:
         - name: storage
           persistentVolumeClaim:
             claimName: mongo-pvc
-''''
+````
 ![alt text](https://github.com/anpavlovsk/CICD-Jenkins-Docker-Minikube/blob/main/screenshots/6.png?raw=true)
 
 
