@@ -4,7 +4,7 @@ node {
     stage('Clone repository') {
 
         /* Clone our repository */
-        /* checkout scm */
+         checkout scm
     }
 
     stage('Build image') {
@@ -12,7 +12,7 @@ node {
        
         /* Build the docker image */
       
-        app = docker.build("anpavlovsk/vue-chess-img")
+        app = docker.build("Dmitriy282/vue-chess-img")
       }
     }
     
