@@ -1,0 +1,48 @@
+---
+- name: TEST docker
+  hosts: docker
+  #become: yes
+  gather_facts: yes
+  # vars_files:
+  #   - "{{inventory_dir}}/group_vars/{{APPS}}/main.yml"
+  tasks:
+
+  - name: debug test_var
+    debug:
+      var: test_var
+
+
+  - name: "RUN task "
+    include_role:
+      name: docker
+      tasks_from: main
+  #
+  # - name: "RUN task {{ TASK_FROM}}"
+  #   include_role:
+  #     name: deploy_robo_docker_shell
+  #     tasks_from: '{{ TASK_FROM}}'
+
+  # - name: COPY SRC to host
+  #   include_role:
+  #     name: deploy_robo_docker_shell
+  #     tasks_from: copy_app
+  #   when: step=="copy"
+  #
+  # - name: BUILD FRONT
+  #   include_role:
+  #     name: deploy_robo_docker_shell
+  #     tasks_from: build_node
+  #   when: step=="front"
+  #
+  #
+  # - name: Create DB
+  #   include_role:
+  #     name: deploy_robo_docker_shell
+  #     tasks_from: database
+  #   when: step=="createdb"
+  #
+  # - name: Start app
+  #   include_role:
+  #     name: deploy_robo_docker_shell
+  #     tasks_from: start_app
+  #   when: step=="startapp"
