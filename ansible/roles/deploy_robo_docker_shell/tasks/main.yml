@@ -1,0 +1,8 @@
+---
+- name: Get OS type
+  debug:
+    var: ansible_facts.distribution
+
+- name: Get OS type
+  debug:
+    var: ansible_user

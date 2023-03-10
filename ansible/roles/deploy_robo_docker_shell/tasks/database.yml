@@ -1,0 +1,38 @@
+---
+- name: Get OS type
+  debug:
+    var: ansible_facts.distribution
+
+- name: Get OS type
+  debug:
+    var: ansible_user
+
+
+- name: Create service service
+  template:
+    src: envlist.j2
+    dest: '/opt/ansible/envlist'
+    mode: 0644
+
+- name: docker run log
+  shell:  docker ps -f name=mydb |wc |awk '{print $1}'
+  register: result
+
+- name: debug
+  debug:
+    var: result
+
+- name: delete container
+  debug:
+    msg: "App container not found skip delete"
+  when: result.stdout |int <2
+
+
+- name: delete container
+  shell:    docker stop mydb
+  when: result.stdout |int >1
+
+- name: docker run
+  shell: |
+    docker run --rm --name mydb -h mydb --net=mynetwork --env-file /opt/ansible/envlist  -d postgres:{{db_version }}
+    docker ps

@@ -1,0 +1,81 @@
+---
+- name: Get OS type
+  debug:
+    var: ansible_facts.distribution
+
+- name: Get OS type
+  debug:
+    var: ansible_user
+
+
+- name: Create service service
+  template:
+    src: DockerApp
+    dest: '/opt/ansible/Dockerfile'
+    mode: 0644
+
+- name: Create service service
+  template:
+    src: service.sh.j2
+    dest: /opt/ansible/service.sh
+    mode: 0644
+
+- name: docker build
+  shell: |
+    cd /opt/ansible/
+    docker build -t app .
+
+- name: docker run log
+  shell:  docker ps -f name=app |wc |awk '{print $1}'
+  register: result
+
+- name: debug
+  debug:
+    var: result
+
+# - set_fact:
+#     count_app: "{{ result.stdout | int}}"
+#
+# - name: debug
+#   debug:
+#     var: count_app
+
+
+- name: delete container
+  debug:
+    msg: "App container not found skip delete"
+  when: result.stdout |int <2
+
+
+- name: delete container
+  shell:    docker stop app
+  when: result.stdout |int >1
+
+- name: docker run
+  shell: |
+      docker run -h app --name app --rm -p 5000:5000 --mount type=bind,source=/opt/app/conf,target=/opt/conf \
+      --privileged=true \
+      --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
+      --net=mynetwork  \
+      --env-file /opt/ansible/envlist -itd app
+
+- name: Sleep for 30 seconds and continue with play
+  wait_for:
+    timeout: 30
+
+- name: test APP container
+  shell:  docker ps -f name=app |wc |awk '{print $1}'
+  register: result
+
+- name: result
+  debug:
+    var: result
+
+- name: TEST  APP
+  fail:
+    msg: App container not found
+  when: result.stdout |int <2
+
+#docker run -p 5000:5000 --mount type=bind,source=/root/infra/conf.yml,target=/opt/conf.yml \
+# --net=mynetwork  \
+# --env-file ./envlist -it app bash

@@ -1,0 +1,51 @@
+---
+- name: Get OS type
+  debug:
+    var: ansible_facts.distribution
+
+- name: Get OS type
+  debug:
+    var: ansible_user
+
+- name: Install
+  apt:
+    name:
+      - unzip
+
+- name: create clear ansible
+  file:
+    path: /opt/ansible
+    state: absent
+
+
+- name: create ansible
+  file:
+    path: '{{item }}' #?Тут опечатка в задании или так надо
+    state: directory
+    mode: 0777
+  loop:
+      - '/opt/ansible/src'
+      - '/opt/ansible/node'
+      - '/opt/ansible/db'
+      - '/opt/ansible/app'
+      - '/opt/ansible/mynginx'
+      - '/opt/ansible/node_modules'
+      - '/opt/app/conf'
+
+- name: Create a directory if it does not exist
+  file:
+    path: /opt/app/conf/conf.yml
+    state: touch
+    mode: 0777
+    # remote_src: yes
+
+- name: copy app
+  unarchive:
+    src: 'app.zip'
+    dest: /opt/ansible/src
+
+# - name: create ansible
+#   file:
+#     src:  '/opt/ansible/src/app'
+#     dest: '/opt/ansible/app/src'
+#     state: link

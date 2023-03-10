@@ -1,0 +1,29 @@
+server {
+  listen 80;
+  server_name school.robointerativo.ru;
+  return 301 https://school.robointerativo.ru$request_uri;
+}
+server {
+   listen 443 ssl http2;
+   server_name school.robointerativo.ru;
+
+
+   ssl_certificate /opt/ser/fullchain.pem;
+   ssl_certificate_key /opt/ser/privkey.pem;
+
+
+
+
+
+
+     include   /opt/ser/options-ssl-nginx.conf;
+     # managed by Certbot
+     ssl_dhparam /opt/ser/ssl-dhparams.pem;
+     # managed by Certbot
+     location / {
+          root /opt/ansible2/src/app/docs/output;
+     }
+
+
+
+   }

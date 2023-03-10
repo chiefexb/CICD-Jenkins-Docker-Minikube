@@ -1,0 +1,56 @@
+---
+- name: Get OS type
+  debug:
+    var: ansible_facts.distribution
+
+- name: Get OS type
+  debug:
+    var: ansible_user
+
+- name: Install
+  apt:
+    name:
+      - unzip
+
+
+- name: Create service service
+  template:
+    src: DockerFileNode.j2
+    dest: '/opt/ansible/node/Dockerfile'
+    mode: 0644
+
+- name: docker build
+  shell: |
+    cd /opt/ansible/node
+    docker build -t mynode .
+
+- name: docker run
+  shell: |
+      docker run --name mynode --rm --mount type=bind,source=/opt/ansible/src/app,target=/opt \
+      --mount type=bind,source=/opt/ansible/node_modules,target=/opt/front/node_modules \
+      -itd mynode
+
+
+
+
+- name: docker run log
+  shell:  docker logs mynode -f
+  register: out_log
+
+- name: static/js
+  stat:
+    path: /opt/ansible/src/app/front/build/static/js
+  register: build_front
+
+- name: Get build_front logs
+  debug:
+    var: build_front
+
+- name: Get build_front logs 2
+  debug:
+    var: out_log
+
+- name: TEST  /opt/ansible/src/app/front/build/static/js
+  fail:
+    msg: Build front error
+  when:  build_front.stat.exists == False
