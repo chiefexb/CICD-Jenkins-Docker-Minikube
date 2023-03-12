@@ -12,7 +12,7 @@ node {
        
         /* Build the docker image */
       
-        app = docker.build("Dmitriy282/vue-chess-img")
+        app = docker.build("anpavlovsk/vue-chess-img")
       }
     }
     
