@@ -28,7 +28,7 @@ node {
         /* Push images: First is tagged with the build BUILD_NUMBER
          the second is just tagged latest !*/
         docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-            custom = app.push("${env.BUILD_NUMBER}")
+            custom = app.build("${env.BUILD_NUMBER}")
             custom.push("latest")
         }
     }
