@@ -5,9 +5,10 @@
 FROM node:16.14.0 as builder
 WORKDIR /usr/src/app
 # COPY ./package*.json ./
-RUN npm install --verbose --only=production
+
 COPY . .
 RUN ls -li &&sleep 15
+RUN npm install --verbose --only=production
 RUN npm run build
 
 #
