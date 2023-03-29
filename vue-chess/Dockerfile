@@ -17,11 +17,11 @@ RUN npm  run build && ls -li
 # This stage builds the final Docker image that we'll use in production.
 #
 
- FROM node:16.14.0 
-# WORKDIR /usr/src/app
-# COPY ./server/package*.json ./
-# RUN npm install --only=production
-# COPY . .
+FROM node:16.14.0
+WORKDIR /usr/src/app
+COPY ./server/package*.json ./
+RUN npm install --only=production
+COPY . .
 
 # Using static files that was build in a stage 1
 COPY --from=builder /usr/src/app/dist ./dist
