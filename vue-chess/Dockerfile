@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 # COPY ./package*.json ./
 
 COPY . .
-RUN ls -li && npm install --verbose --only=production
+RUN rm -rf node_modules && ls -li && npm install --verbose --only=production
 RUN npm run build &&ls -li &&sleep 15
 
 #
