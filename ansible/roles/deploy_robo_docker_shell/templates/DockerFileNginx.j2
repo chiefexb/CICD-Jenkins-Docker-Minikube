@@ -1,0 +1,32 @@
+FROM nginx
+EXPOSE 443 80
+
+# RUN   mkdir /etc/letsencrypt/live/michail-bozhenkov.ru/ -p &&           echo 'work around FIX last.loop'
+
+
+COPY options-ssl-nginx.conf ssl-dhparams.pem /etc/letsencrypt/
+COPY site.conf   /etc/nginx/conf.d/
+
+
+# COPY files/michail-bozhenkov.ru/fullchain.pem files/michail-bozhenkov.ru/privkey.pem /etc/letsencrypt/live/michail-bozhenkov.ru/
+COPY fullchain.pem privkey.pem /etc/letsencrypt/live/robointerativo.ru/
+# COPY files/geeks/fullchain.pem files/geeks/privkey.pem /etc/letsencrypt/live/geekslore.ru/
+
+
+
+RUN apt-get update && apt-get install -y locales
+
+# Locale
+RUN sed -i -e \
+  's/# ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen \
+   && locale-gen
+
+ENV LANG ru_RU.UTF-8
+ENV LANGUAGE ru_RU:ru
+ENV LC_LANG ru_RU.UTF-8
+ENV LC_ALL ru_RU.UTF-8
+
+
+ENV TZ Europe/Moscow
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN echo TEST BUILD

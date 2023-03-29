@@ -1,0 +1,86 @@
+---
+- name: Get OS type
+  debug:
+    var: ansible_facts.distribution
+
+- name: Get OS type
+  debug:
+    var: ansible_user
+
+
+
+
+#Install Xterm
+#
+# - name: docker build xterm
+#   shell: |
+#     cd /opt/ansible/node
+#     docker build -t mynode .
+#
+# - name: docker run
+#   shell: |
+#       docker run --name mynode --rm --mount type=bind,source=/opt/ansible/src/app,target=/opt \
+#       --mount type=bind,source=/opt/ansible/node_modules,target=/opt/front/node_modules \
+#       -itd mynode
+
+#Create conf and docker for nginx
+- name: Create service service
+  template:
+    src:  "{{ item.src }}"
+    dest: '/opt/ansible/mynginx/{{item.dst }}'
+    mode: 0644
+  loop:
+    - {'src': 'DockerFileNginx.j2', 'dst': 'Dockerfile'}
+    - {'src': 'site.conf.j2', 'dst': 'site.conf'}
+
+- name: COPY
+  copy:
+    src: "options-ssl-nginx.conf"
+    dest: "/opt/ansible/mynginx/options-ssl-nginx.conf"
+
+
+- name: crateCerts
+  copy:
+    content: "{{ item.cert }}"
+    dest: "/opt/ansible/mynginx/{{ item.filename}}"
+  loop:
+    - {'cert': '{{cert_full}}' , 'filename': 'fullchain.pem'}
+    - {'cert': '{{cert_key}}' , 'filename': 'privkey.pem'}
+    - {'cert': '{{ssl_dhparams}}' , 'filename':  'ssl-dhparams.pem'}
+
+- name: docker build
+  shell: |
+    cd /opt/ansible/mynginx
+    docker build -t mynginx .
+
+
+- name: Create service service
+  template:
+    src: envlist.j2
+    dest: '/opt/ansible/envlist'
+    mode: 0644
+
+- name: docker run log
+  shell:  docker ps -f name=mynginx |wc |awk '{print $1}'
+  register: result
+
+- name: debug
+  debug:
+    var: result
+
+- name: delete container
+  debug:
+    msg: "App container not found skip delete"
+  when: result.stdout |int <2
+
+
+- name: delete container
+  shell:    docker stop mynginx
+  when: result.stdout |int >1
+
+- name: docker run
+  shell: |
+    docker run -h mynginx --name mynginx --rm -p 80:80 -p 443:443 \
+         --net=mynetwork  \
+         --env-file /opt/ansible/envlist -itd mynginx
+    docker ps

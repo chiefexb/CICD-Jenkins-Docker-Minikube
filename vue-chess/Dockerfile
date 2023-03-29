@@ -2,7 +2,7 @@
 # Build stage 1.
 # This state builds our Script and produces an intermediate Docker image containing the compiled JavaScript code.
 #
-FROM node:10 as builder
+FROM node:16.14.0 as builder
 WORKDIR /usr/src/app
 COPY ./package*.json ./
 RUN npm install --verbose

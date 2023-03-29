@@ -1,0 +1,97 @@
+---
+- name: Get OS type
+  debug:
+    var: ansible_facts.distribution
+
+- name: Get OS type
+  debug:
+    var: ansible_user
+
+- name: Install
+  apt:
+    name:
+      - unzip
+      - virtualenv
+
+- name: delete
+  file:
+    path: /opt/app
+    state: absent
+
+- name: delete
+  file:
+    path: /opt/conf.yml
+    state: absent
+
+- name: create
+  file:
+    path: /opt/app
+    state: directory
+
+- name: copy
+  copy:
+    src: app.zip
+    dest: /opt
+
+
+
+- name: create
+  unarchive:
+    src: /opt/app.zip
+    dest: /opt
+    remote_src: yes
+
+- name: Install bottle
+  pip:
+    requirements: /opt/app/back/requirements.txt
+    virtualenv: /opt/app/venv
+    virtualenv_python: python3
+
+
+
+- name: Install bottle
+  shell: |
+    cd /opt/app
+    source venv/bin/activate
+    cd back/robosite
+    python init_db.py
+    cd /opt/app/back
+    python setup.py install
+
+  args:
+    executable: /bin/bash
+  environment: '{{ applicatation_env}}'
+
+- name: Download foo.conf
+  get_url:
+    url: '{{ nodejs_url}}'
+    dest: /opt/nodejs.tar.gz
+    mode: '0440'
+
+- name: Extract foo.tgz into /var/lib/foo
+  ansible.builtin.unarchive:
+    src: /opt/nodejs.tar.gz
+    dest: /opt/
+    remote_src: yes
+
+- name: Install bottle
+  shell: |
+    export PATH=$PATH:{{ nodejs_dir }}
+    cd /opt/app/front
+    node --version
+    npm install
+    npm run build
+  args:
+      executable: /bin/bash
+
+#pytest --cov-report xml --cov=robosite tests
+- name: Install bottle
+  shell: |
+    cd /opt/app
+    source venv/bin/activate
+    cd back
+    pytest
+    pytest --cov-report term --cov=robosite tests
+  args:
+    executable: /bin/bash
+  environment: '{{ applicatation_env}}'
