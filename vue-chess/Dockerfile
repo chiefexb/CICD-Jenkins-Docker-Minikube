@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 
 COPY . .
 RUN ls -li && npm install --verbose --only=production
-RUN npm run build
+RUN npm run build &&ls -li &&sleep 15
 
 #
 # Build stage 2.
