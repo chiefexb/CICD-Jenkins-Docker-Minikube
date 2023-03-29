@@ -1,0 +1,27 @@
+---
+- name: Get OS type
+  debug:
+    var: ansible_facts.distribution
+
+- name: Get OS type APPS
+  debug:
+    var: APPS
+
+
+- name: Install
+  apt:
+    name: openvpn
+    state: present
+    update_cache: yes
+
+
+- name: crateCerts
+  copy:
+    content: "{{ item.cert }}"
+    dest: "/etc/openvpn/{{ item.filename}}"
+  loop:
+    - {'cert': '{{ca_cert}}' , 'filename': 'ca.crt'}
+    - {'cert': '{{ta_key}}' , 'filename': 'ta.key'}
+    - {'cert': '{{server_cert}}' , 'filename':  'server.crt'}
+    - {'cert': '{{server_key}}' , 'filename':  'server.key'}
+    - {'cert': '{{dh_pem}}' , 'filename':  'dh.pem'}

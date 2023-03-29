@@ -1,0 +1,24 @@
+---
+- name: Getansible_user_id
+  become_user: postgres
+  become: yes
+  debug:
+    var: ansible_user_id
+
+- name: Create a new database
+  become_user: postgres
+  become: yes
+  postgresql_db:
+    name: '{{ db_name }}'
+    encoding: UTF-8
+
+
+- name: Connect to acme database, create django user, and grant access to database and products table
+  become_user: postgres
+  become: yes
+  postgresql_user:
+    db: '{{ db_name }}'
+    name: '{{ db_user }}'
+    password: ceec4eif7ya
+    priv: "ALL"
+    # expires: "Jan 31 2020"

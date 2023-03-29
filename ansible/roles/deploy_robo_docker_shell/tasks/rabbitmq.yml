@@ -1,0 +1,36 @@
+---
+- name: Get OS type
+  debug:
+    var: ansible_facts.distribution
+
+- name: Get OS type
+  debug:
+    var: ansible_user
+
+
+
+
+
+
+- name: docker run log
+  shell:  docker ps -f name=myrabbit |wc |awk '{print $1}'
+  register: result
+
+- name: debug
+  debug:
+    var: result
+
+- name: delete container
+  debug:
+    msg: "App container not found skip delete"
+  when: result.stdout |int <2
+
+
+- name: delete container
+  shell:    docker stop myrabbit
+  when: result.stdout |int >1
+
+- name: docker run
+  shell: |
+        docker run -h myrabbit --name myrabbit --rm        --net=mynetwork         -itd rabbitmq:3
+        docker ps
