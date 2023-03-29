@@ -9,7 +9,7 @@ WORKDIR /usr/src/app
 COPY . .
 RUN rm -rf node_modules && ls -li && npm install --verbose
 #--only=production
-RUN npm  run build && ls -li 
+RUN npm  run build && ls -li
 
 #
 # Build stage 2.
@@ -17,7 +17,7 @@ RUN npm  run build && ls -li
 # This stage builds the final Docker image that we'll use in production.
 #
 
-# FROM node:10
+ FROM node:16.14.0 
 # WORKDIR /usr/src/app
 # COPY ./server/package*.json ./
 # RUN npm install --only=production
